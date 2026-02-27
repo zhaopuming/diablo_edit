@@ -16,6 +16,7 @@ pub struct D2Item {
 #[derive(Debug, Serialize, Deserialize, Clone, TS)]
 #[ts(export)]
 pub struct ItemData {
+    pub name: String,
     pub identified: bool,
     pub socketed: bool,
     pub ethereal: bool,
@@ -253,13 +254,15 @@ fn parse_single_item<R: Read>(
     let meta = get_item_meta(&type_id);
     let mut width = 1;
     let mut height = 1;
+    let mut name = String::from_utf8_lossy(&type_id).trim().to_string();
     if let Some(m) = meta {
         width = m.width;
         height = m.height;
+        name = m.name.to_string();
     }
 
     Ok(D2Item {
-        data: ItemData { identified, socketed, ethereal, personalized, runeword, simple, location, position, column, row, container, type_id, is_ear, width, height },
+        data: ItemData { name, identified, socketed, ethereal, personalized, runeword, simple, location, position, column, row, container, type_id, is_ear, width, height },
         socketed_items,
     })
 }
