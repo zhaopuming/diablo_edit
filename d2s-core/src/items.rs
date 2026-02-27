@@ -30,6 +30,8 @@ pub struct ItemData {
     #[ts(type = "number[]")]
     pub type_id: [u8; 4],
     pub is_ear: bool,
+    pub width: u8,
+    pub height: u8,
 }
 
 #[binread]
@@ -248,8 +250,16 @@ fn parse_single_item<R: Read>(
         }
     }
 
+    let meta = get_item_meta(&type_id);
+    let mut width = 1;
+    let mut height = 1;
+    if let Some(m) = meta {
+        width = m.width;
+        height = m.height;
+    }
+
     Ok(D2Item {
-        data: ItemData { identified, socketed, ethereal, personalized, runeword, simple, location, position, column, row, container, type_id, is_ear },
+        data: ItemData { identified, socketed, ethereal, personalized, runeword, simple, location, position, column, row, container, type_id, is_ear, width, height },
         socketed_items,
     })
 }

@@ -15,10 +15,12 @@ async fn open_save_file(path: String) -> Result<D2sSave, String> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    log::info!("Diablo Edit2 Backend Initialized");
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_log::Builder::new().build())
         .invoke_handler(tauri::generate_handler![greet, open_save_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
