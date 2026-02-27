@@ -135,6 +135,10 @@ BOOL CDiabloEdit2App::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	// Enable Per-Monitor DPI V2 awareness (Windows 10 1703+)
+	// This prevents blurry bitmap scaling on high-DPI screens
+	SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
 	CWinApp::InitInstance();
 
 

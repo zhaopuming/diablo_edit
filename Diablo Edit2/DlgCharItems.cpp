@@ -7,10 +7,19 @@
 #include "DlgCharItems.h"
 #include "DlgFoundry.h"
 #include "DlgNewItem.h"
+#include "DpiHelper.h"
 
 #include <functional>
 
 using namespace std;
+
+// D2R Stash Grid Size (can be customized)
+int StashGridSizeX = 16;
+int StashGridSizeY = 16;
+int InvGridSizeX = 13;
+int InvGridSizeY = 8;
+int CubeGridSizeX = 10;
+int CubeGridSizeY = 10;
 
 //Popup menu item IDs
 #define ID_ITEM_IMPORT                  100
@@ -702,6 +711,14 @@ void CDlgCharItems::CalculateScale()
 		pWnd->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 
+		// Apply user configurable stash dimensions
+		POSITION_INFO[STASH_D2R][2] = StashGridSizeX;
+		POSITION_INFO[STASH_D2R][3] = StashGridSizeY;
+		POSITION_INFO[INVENTORY][2] = InvGridSizeX;
+		POSITION_INFO[INVENTORY][3] = InvGridSizeY;
+		POSITION_INFO[CUBE][2] = CubeGridSizeX;
+		POSITION_INFO[CUBE][3] = CubeGridSizeY;
+
 		// This grid should be info[2] * GRID_WIDTH wide and info[3] * GRID_WIDTH high, so calcualte scale of each GRID Cell.
 		auto& info = POSITION_INFO[STASH_D2R];
 		double scaleX = double(rect.Width()) / double(info[2] * GRID_WIDTH);
@@ -735,6 +752,10 @@ void CDlgCharItems::CalculateScale()
 		m_vGridView[i].Enable(m_bHasMercenary);
 	//选择箱子大小
 	SetD2R(TRUE);
+	// Scale info window positions for high-DPI
+	double dpiScale = GetDpiScale(GetSafeHwnd());
+	INFO_WINDOW_LEFT = (int)(50 * dpiScale);
+	INFO_WINDOW_RIGHT = (int)(550 * dpiScale);
 }
 
 void CDlgCharItems::DrawGrids(CPaintDC & dc)
@@ -1147,6 +1168,102 @@ void CDlgCharItems::OnContextMenu(CWnd* /*pWnd*/, CPoint point) {
 BOOL CDlgCharItems::OnInitDialog()
 {
     CCharacterDialogBase::OnInitDialog();
+
+	// Dynamically shift UI components to accommodate larger stash grids.
+	// Original D2R stash was designed for 10x10.
+	// Inventory was 10x4.
+	// Cube was 3x4.
+	CRect stashRect, invRect, cubeRect;
+	int shiftRightAmount = 0;
+	int shiftDownAmount = 0;
+	int stashShiftX = 0;
+	int stashShiftY = 0;
+
+	if (GetDlgItem(IDC_INV_STASH) && GetDlgItem(IDC_INV_STASH)->GetSafeHwnd()) {
+		GetDlgItem(IDC_INV_STASH)->GetWindowRect(&stashRect);
+		ScreenToClient(&stashRect);
+		int currentGridWidth = stashRect.Width() / 10;
+		int currentGridHeight = stashRect.Height() / 10;
+		
+		stashShiftX = (StashGridSizeX - 10) * currentGridWidth;
+		stashShiftY = (StashGridSizeY - 10) * currentGridHeight;
+
+		// Resize the stash control itself so grids don't shrink
+		GetDlgItem(IDC_INV_STASH)->SetWindowPos(NULL, 0, 0, stashRect.Width() + stashShiftX, stashRect.Height() + stashShiftY, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOMOVE);
+		
+		shiftRightAmount = max(shiftRightAmount, stashShiftX);
+		shiftDownAmount = max(shiftDownAmount, stashShiftY);
+	}
+
+	if (GetDlgItem(IDC_INV) && GetDlgItem(IDC_INV)->GetSafeHwnd()) {
+		GetDlgItem(IDC_INV)->GetWindowRect(&invRect);
+		ScreenToClient(&invRect);
+		int currentGridWidth = invRect.Width() / 10;
+		int currentGridHeight = invRect.Height() / 4;
+		
+		int invShiftX = (InvGridSizeX - 10) * currentGridWidth;
+		int invShiftY = (InvGridSizeY - 4) * currentGridHeight;
+
+		// Move Inventory grid DOWN by stashShiftY and resize
+		GetDlgItem(IDC_INV)->SetWindowPos(NULL, invRect.left, invRect.top + shiftDownAmount, invRect.Width() + invShiftX, invRect.Height() + invShiftY, SWP_NOACTIVATE | SWP_NOZORDER);
+
+		shiftRightAmount = max(shiftRightAmount, invShiftX); // Assuming Inv is under Stash
+		shiftDownAmount += invShiftY; // Add inventory's vertical growth to the total downward shift for anything below it
+	}
+
+	if (GetDlgItem(IDC_INV_CUBE) && GetDlgItem(IDC_INV_CUBE)->GetSafeHwnd()) {
+		GetDlgItem(IDC_INV_CUBE)->GetWindowRect(&cubeRect);
+		ScreenToClient(&cubeRect);
+		int currentGridWidth = cubeRect.Width() / 3;
+		int currentGridHeight = cubeRect.Height() / 4;
+		
+		int cubeShiftX = (CubeGridSizeX - 3) * currentGridWidth;
+		int cubeShiftY = (CubeGridSizeY - 4) * currentGridHeight;
+
+		// Move Cube right based on Inventory widening, then resize. Move down based on Stash widening.
+		int pushCubeRight = (InvGridSizeX - 10) * currentGridWidth;
+		GetDlgItem(IDC_INV_CUBE)->SetWindowPos(NULL, cubeRect.left + pushCubeRight, cubeRect.top + stashShiftY, cubeRect.Width() + cubeShiftX, cubeRect.Height() + cubeShiftY, SWP_NOACTIVATE | SWP_NOZORDER);
+		
+		shiftRightAmount = max(shiftRightAmount, pushCubeRight + cubeShiftX);
+	}
+
+	if (shiftRightAmount > 0 || shiftDownAmount > 0) {
+		int rightThreshold = stashRect.right - 5;
+		int bottomThreshold = stashRect.bottom - 5;
+
+		CWnd* pChild = GetWindow(GW_CHILD);
+		while (pChild) {
+			if (pChild->GetSafeHwnd()) {
+				int id = pChild->GetDlgCtrlID();
+				if (id != IDC_INV_STASH && id != IDC_INV && id != IDC_INV_CUBE) {
+					CRect childRect;
+					pChild->GetWindowRect(&childRect);
+					ScreenToClient(&childRect);
+					
+					int sx = 0, sy = 0;
+					
+					// Special case: "Sockets" box is below everything on the left side
+					if (id == IDC_INV_SOCKETS) {
+						sy = shiftDownAmount;
+						// Sockets could also be shifted right along with the gap between Inv and Cube
+						sx = (InvGridSizeX - 10) * (stashRect.Width() / 10) / 2; // Arbitrary center shift
+					} 
+					else {
+						// If the control was to the right of the stash originally
+						if (childRect.left >= rightThreshold) sx = shiftRightAmount;
+						// If the control was below the stash originally (and not sockets)
+						if (childRect.top >= bottomThreshold) sy = stashShiftY;
+					}
+					
+					if (sx > 0 || sy > 0) {
+						pChild->SetWindowPos(NULL, childRect.left + sx, childRect.top + sy, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOSIZE);
+					}
+				}
+			}
+			pChild = pChild->GetWindow(GW_HWNDNEXT);
+		}
+	}
+
 	CalculateScale();
 	m_lstRecycle.InsertColumn(0, _T(""), LVCFMT_LEFT, 140);
 	m_scTrasparent.SetRange(0, 255);

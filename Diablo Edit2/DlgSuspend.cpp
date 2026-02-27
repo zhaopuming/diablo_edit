@@ -5,6 +5,7 @@
 
 #include "Diablo Edit2.h"
 #include "DlgSuspend.h"
+#include "DpiHelper.h"
 
 #include <deque>
 #include <numeric>
@@ -235,6 +236,11 @@ BOOL CDlgSuspend::OnInitDialog()
 			fun(GetSafeHwnd(),0,m_nTransparency,2); 
 		FreeLibrary(hInst); 
 	}
+	// Scale pixel constants for high-DPI
+	double dpiScale = GetDpiScale(GetSafeHwnd());
+	HEIGHT_PER_LINE = (LONG)(20 * dpiScale);
+	WIDTH_PER_CHAR = (LONG)(9 * dpiScale);
+	WINDOW_WIDTH_MIN = (LONG)(273 * dpiScale);
 	return TRUE;
 }
 

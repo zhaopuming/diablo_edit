@@ -84,8 +84,8 @@ class CDlgCharItems : public CCharacterDialogBase
 	BOOL IsAlternativeWeapon() const { return m_bSecondHand != (m_dwWeaponSet != 0); }	//显示正手武器（false：iPosition=0x4）还是副手武器（true：iPosition=0xb）
 
 	//悬浮窗
-	static const int INFO_WINDOW_LEFT = 50;		//左边悬浮窗的位置X
-	static const int INFO_WINDOW_RIGHT = 550;	//右边悬浮窗的位置X
+	int INFO_WINDOW_LEFT = 50;		//左边悬浮窗的位置X (DPI-scaled at init)
+	int INFO_WINDOW_RIGHT = 550;	//右边悬浮窗的位置X (DPI-scaled at init)
 	std::unique_ptr<CDlgSuspend> m_pDlgItemInfo;//显示物品信息的悬浮窗口
 	BOOL m_bNotShowItemInfoDlg;					//是否隐藏物品信息悬浮窗
 	CSliderCtrl m_scTrasparent;					//属性悬浮窗的透明度
