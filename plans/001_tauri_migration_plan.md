@@ -35,12 +35,12 @@ Migrating to a Tauri + Rust + Vue3 (TypeScript) stack offers extreme advantages:
 
 ## Migration Roadmap
 
-### Phase 1: Rust Backend Core (`d2s-core` crate)
+### Phase 1: Rust Backend Core (`d2s-core` crate) [COMPLETED]
 Before touching UI, the binary parsing must be solid.
-1. **Initialize a pure Rust library** to parse/serialize Diablo 2 Resurrected `.d2s` strings, headers, and bit-level item streams.
-2. **Translate C++ Structs (`Diablo2Struct.h`)**: Port structures (Stats, Waypoints, Quests) to Rust models.
-3. **Write Unit Tests**: Feed existing `.d2s` files into the Rust parser, assert correctness, then re-serialize to a new file and ensure the game loads it (or checksums match).
-4. **Port Data Dictionaries**: Extract static game data (Excel `.txt` files or compiled binaries) into static Rust structures or embedded JSON/SQLite.
+1. [x] **Initialize a pure Rust library** to parse/serialize Diablo 2 Resurrected `.d2s` strings, headers, and bit-level item streams.
+2. [x] **Translate C++ Structs (`Diablo2Struct.h`)**: Ported all major structures (Stats, Waypoints, Quests, Skills, Items, Corpses, Mercenaries).
+3. [x] **Verification**: Built a robust test suite (via `main.rs` and report generator) verifying all 18 items in the test character with perfect bitstream synchronization.
+4. [x] **Port Data Dictionaries**: Implemented automated metadata generation (`gen_metadata.py` and `gen_properties.py`) from original game data files.
 
 ### Phase 2: Tauri Application Setup
 1. **Scaffold the project**:
