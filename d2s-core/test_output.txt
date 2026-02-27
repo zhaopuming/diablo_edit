@@ -1,0 +1,27 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running tests\parse_test.rs (target\debug\deps\parse_test-c6477d8757ca96fa.exe)
+
+running 1 test
+
+test test_parse_real_save_file ... FAILED
+
+failures:
+
+failures:
+    test_parse_real_save_file
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+thread 'test_parse_real_save_file' (188976) panicked at tests\parse_test.rs:26:13:
+Failed to parse save file: BinrwError(
+ ╺━━━━━━━━━━━━━━━━━━━━┅ Backtrace ┅━━━━━━━━━━━━━━━━━━━━╸
+
+ 0: Error: Invalid Skills Magic: expected 0x6669 (if) at 0x2fd
+           While parsing field 'skills' in D2sSave
+     at src\lib.rs:29
+
+ ╺━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╸
+
+)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `--test parse_test`
