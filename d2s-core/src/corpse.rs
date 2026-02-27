@@ -1,9 +1,11 @@
 use binrw::binread;
 use serde::{Deserialize, Serialize};
 use crate::items::ItemList;
+use ts_rs::TS;
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct Corpse {
     #[br(assert(magic == 0x4D4A, "Invalid Corpse Magic: expected 'JM'"))]
@@ -15,9 +17,11 @@ pub struct Corpse {
 }
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct CorpseData {
+    #[ts(type = "number[]")]
     pub unknown: [u8; 12],
     pub items: ItemList,
 }

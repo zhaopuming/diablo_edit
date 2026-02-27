@@ -1,8 +1,10 @@
 use binrw::binread;
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct Golem {
     #[br(assert(magic == 0x666B, "Invalid Golem Magic: expected 'kf'"))]

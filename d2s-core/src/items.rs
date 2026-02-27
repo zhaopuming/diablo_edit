@@ -4,14 +4,17 @@ use std::io::{Read, Seek};
 use bitstream_io::{BitRead, BitReader, LittleEndian};
 use crate::huffman::get_huffman;
 use crate::metadata::get_item_meta;
+use ts_rs::TS;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 pub struct D2Item {
     pub data: ItemData,
     pub socketed_items: Vec<D2Item>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 pub struct ItemData {
     pub identified: bool,
     pub socketed: bool,
@@ -24,12 +27,14 @@ pub struct ItemData {
     pub column: u8,
     pub row: u8,
     pub container: u8,
+    #[ts(type = "number[]")]
     pub type_id: [u8; 4],
     pub is_ear: bool,
 }
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct ItemList {
     #[br(assert(magic == 0x4D4A, "Invalid Items Magic: expected 'JM'"))]

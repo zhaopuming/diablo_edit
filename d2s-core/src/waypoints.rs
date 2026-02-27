@@ -1,22 +1,25 @@
 use binrw::binrw;
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 #[binrw]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[brw(little)]
-pub struct WaypointData {
-    pub unk1: u16,        // 0x102
-    pub waypoints: [u8; 5],
-    pub unk2: [u8; 17],   // Zeroes
+pub struct DifficultyWaypoints {
+    pub unknown: [u8; 2],
+    pub waypoints: [u8; 9],
+    pub unknown2: [u8; 17],
 }
 
 #[binrw]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[brw(little)]
 pub struct Waypoints {
-    #[br(assert(magic == 0x5357, "Invalid Waypoints Magic: expected 0x5357 (WS)"))]
+    #[br(assert(magic == 0x5357, "Invalid Waypoints Magic: expected 'WS' (0x5357)"))]
     pub magic: u16,
-    pub unk1: u32,
-    pub size: u16,        // 0x50 (80)
-    pub modes: [WaypointData; 3], // Normal, Nightmare, Hell
+    pub unknown: u16,
+    pub size: u16,
+    pub difficulties: [DifficultyWaypoints; 3], // Normal, Nightmare, Hell
 }

@@ -24,9 +24,11 @@ use corpse::Corpse;
 use mercenary::Mercenary;
 use golem::Golem;
 use serde_big_array::BigArray;
+use ts_rs::TS;
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct D2sSave {
     pub header: D2sHeader,
@@ -35,6 +37,7 @@ pub struct D2sSave {
     
     // NPC Dialog Intro Flags
     #[serde(with = "BigArray")]
+    #[ts(type = "number[]")]
     pub npc_data: [u8; 0x34],
     
     pub stats: PlayerStats,
@@ -70,5 +73,12 @@ mod tests {
     fn test_internal() {
         println!("INTERNAL TEST RUNNING");
         assert_eq!(1+1, 2);
+    }
+
+    #[test]
+    fn export_types() {
+        use ts_rs::TS;
+        // This triggers the export to bindings/
+        let _ = D2sSave::decl();
     }
 }

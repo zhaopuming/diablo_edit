@@ -1,8 +1,10 @@
 use binrw::binread;
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct Mercenary {
     #[br(assert(magic == 0x666A, "Invalid Mercenary Magic: expected 'jf'"))]

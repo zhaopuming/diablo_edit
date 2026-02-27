@@ -42,15 +42,12 @@ Before touching UI, the binary parsing must be solid.
 3. [x] **Verification**: Built a robust test suite (via `main.rs` and report generator) verifying all 18 items in the test character with perfect bitstream synchronization.
 4. [x] **Port Data Dictionaries**: Implemented automated metadata generation (`gen_metadata.py` and `gen_properties.py`) from original game data files.
 
-### Phase 2: Tauri Application Setup
-1. **Scaffold the project**:
-   ```bash
-   pnpm create tauri-app
-   # Select Vue, TypeScript, Vite
-   ```
-2. **Establish IPC (Inter-Process Communication)**:
-   * Write Tauri commands in Rust (`open_file`, `save_file`, `get_character_state`, `set_character_state`).
-   * Generate TypeScript types from Rust structs (using `ts-rs` crate) to ensure frontend/backend data consistency.
+### Phase 2: Tauri Application Setup [COMPLETED]
+1. [x] **Scaffold the project**: `pnpm create tauri-app`
+2. [x] **Establish IPC (Inter-Process Communication)**:
+   * [x] Write Tauri commands in Rust (`open_save_file`).
+   * [x] Generate TypeScript types from Rust structs (using `ts-rs` crate) to ensure frontend/backend data consistency.
+3. [x] **Environment Verification**: Verified full end-to-end IPC from file picker to Rust parser.
 
 ### Phase 3: Frontend Foundation (Vue3)
 1. **State Management**: Set up Pinia to hold the current `CharacterData` loaded from Rust.

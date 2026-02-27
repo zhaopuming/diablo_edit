@@ -1,8 +1,10 @@
 use binrw::binrw;
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 #[binrw]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[brw(little)]
 pub struct QuestInfoData {
     pub introduced_act1: u16,
@@ -27,7 +29,8 @@ pub struct QuestInfoData {
 }
 
 #[binrw]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[brw(little)]
 pub struct QuestInfo {
     #[br(assert(magic == 0x216F6F57, "Invalid Quest Info Magic: expected 0x216F6F57"))]

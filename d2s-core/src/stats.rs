@@ -2,9 +2,11 @@ use binrw::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::io::{Read, Seek};
 use bitstream_io::{BitRead, BitReader, LittleEndian};
+use ts_rs::TS;
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
 #[br(little)]
 pub struct PlayerStats {
     #[br(assert(magic == 0x6667, "Invalid Stats Magic: expected 0x6667 (gf)"))]
