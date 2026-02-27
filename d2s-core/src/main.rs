@@ -36,16 +36,41 @@ fn main() {
                 .trim_matches(char::from(0))
                 .to_string();
             println!("Name: '{}'", name);
+            println!("Class: {} (Amazon)", save.header.char_class);
             println!("Level: {}", save.header.char_level);
             
-            println!("Items (Character): {}", save.items.items.len());
+            println!("\nSTATS:");
+            let stat_labels = [
+                "Strength", "Energy", "Dexterity", "Vitality", "Stat Points", "Skill Points",
+                "Life (cur)", "Life (max)", "Mana (cur)", "Mana (max)", "Stamina (cur)", "Stamina (max)",
+                "Level", "Experience", "Gold (inv)", "Gold (stash)"
+            ];
+            for (id, val) in &save.stats.values {
+                let label = if (*id as usize) < stat_labels.len() { stat_labels[*id as usize] } else { "Unknown" };
+                println!("  {:<12}: {}", label, val);
+            }
+
+            println!("\nSKILLS (levels):");
+            println!("  {:?}", save.skills.skills);
+
+            println!("\nITEMS ({} total):", save.items.items.len());
             for (i, item) in save.items.items.iter().enumerate() {
-                let type_name = String::from_utf8_lossy(&item.data.type_id);
-                println!("  Item {}: ID '{}', Pos({}, {}), Simple: {}", 
-                    i, type_name, item.data.column, item.data.row, item.data.simple);
+                let type_id = String::from_utf8_lossy(&item.data.type_id);
+                let loc = match item.data.container {
+                    0 => "Inventory/Belt",
+                    2 => "Equipped",
+                    4 => "Cube",
+                    5 => "Stash",
+                    _ => "Other"
+                };
+                println!("  #{:<2} {:<5} | Loc: {:<14} | Pos: ({:>2}, {:>2}) | Simple: {:<5} | ID'd: {:<5}", 
+                    i, type_id, loc, item.data.column, item.data.row, item.data.simple, item.data.identified);
             }
             
-            println!("Corpse Count: {}", save.corpse.count);
+            println!("\nOTHER:");
+            println!("  Corpse Count   : {}", save.corpse.count);
+            println!("  Mercenary Magic: 0x{:04X}", save.mercenary.magic);
+            println!("  Golem Status   : {}", save.golem.exists);
         },
         Err(e) => {
             eprintln!("PARSING FAILED: {}", e);

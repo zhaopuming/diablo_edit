@@ -2,11 +2,11 @@ use binrw::binread;
 use serde::{Deserialize, Serialize};
 
 #[binread]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[br(little)]
 pub struct Golem {
     #[br(assert(magic == 0x666B, "Invalid Golem Magic: expected 'kf'"))]
     pub magic: u16,
-    pub has_golem: u8,
-    // If has_golem != 0, a CD2Item follows.
+    pub exists: u8,
+    // If exists == 1, more data might follow. For now we assume 0 for simple saves.
 }

@@ -1,0 +1,77 @@
+warning: value assigned to `flags_27` is never read
+  --> src\items.rs:81:14
+   |
+81 |              flags_27 = (magic as u32) | (extra << 16);
+   |              ^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: `d2s-core` (lib) generated 1 warning
+   Compiling d2s-core v0.1.0 (D:\github\zhaopuming\diablo_edit\d2s-core)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.39s
+     Running `target\debug\d2s-core.exe`
+D2S Full Parser Test
+File size: 1328 bytes
+Hex dump at 835: [4A, 4D, 12, 00, 10, 00, A2, 00, 15, 00, 00, CF, 4F, 00, 10, 00, A2, 00, 15, 04, 00, CF, 4F, 00, 10, 00, A2, 00, 15, 08, 00, CF, 4F, 00, 10, 00, A2, 00, 15, 0C, 00, CF, 4F, 00, 10, 00, A2, 00, 05, F0, C5, 90, 08, 10, 00, A2, 00, 05, B0, E5, 47, 22, 10, 00, 80, 00, 05, 00, 44, D8, 4F, 08, 99, 8D, 23, 1E, 4B, 00, 00, 43, 8C, 50, FE, FF, 03, 10, 00, 80, 00, 05, 28, F4, 02, 0D, 3D, 8D, A4, 74, DC, 43, 08, DC, 94, 00, 50, 12, E1, CD, 1B, 1F, 83, 29, C8, 1A, 08, FA, 0F, 10, 00, 80, 00, 05, 20, F4, 59, 0D, 1D, CB]
+0343 | 01001010 01001101 00010010 00000000 00010000 00000000 10100010 00000000 
+034B | 00010101 00000000 00000000 11001111 01001111 00000000 00010000 00000000 
+0353 | 10100010 00000000 00010101 00000100 00000000 11001111 01001111 00000000 
+035B | 00010000 00000000 10100010 00000000 00010101 00001000 00000000 11001111 
+0363 | 01001111 00000000 00010000 00000000 10100010 00000000 00010101 00001100 
+036B | 00000000 11001111 01001111 00000000 00010000 00000000 10100010 00000000 
+0373 | 00000101 11110000 11000101 10010000 00001000 00010000 00000000 10100010 
+037B | 00000000 00000101 10110000 11100101 01000111 00100010 00010000 00000000 
+0383 | 10000000 00000000 00000101 00000000 01000100 11011000 01001111 00001000 
+038B | 10011001 10001101 00100011 00011110 01001011 00000000 00000000 01000011 
+0393 | 10001100 01010000 11111110 11111111 00000011 00010000 00000000 10000000 
+039B | 00000000 00000101 00101000 11110100 00000010 00001101 00111101 10001101 
+03A3 | 10100100 01110100 11011100 01000011 00001000 11011100 10010100 00000000 
+03AB | 01010000 00010010 11100001 11001101 00011011 00011111 10000011 00101001 
+03B3 | 11001000 00011010 00001000 11111010 00001111 00010000 00000000 10000000 
+03BB | 00000000 00000101 00100000 11110100 01011001 00001101 00011101 11001011 
+SUCCESS!
+Name: ''
+Class: 0 (Amazon)
+Level: 1
+
+STATS:
+  Stamina (cur): 21504
+  Level       : 1
+  Strength    : 20
+  Life (cur)  : 12800
+  Dexterity   : 25
+  Stamina (max): 21504
+  Life (max)  : 12800
+  Mana (cur)  : 3840
+  Mana (max)  : 3840
+  Vitality    : 20
+  Energy      : 15
+
+SKILLS (levels):
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ITEMS (18 total):
+  #0  hp1   | Loc: Inventory/Belt | Pos: ( 0,  0) | Simple: true  | ID'd: true 
+  #1  hp1   | Loc: Inventory/Belt | Pos: ( 1,  0) | Simple: true  | ID'd: true 
+  #2  hp1   | Loc: Inventory/Belt | Pos: ( 2,  0) | Simple: true  | ID'd: true 
+  #3  hp1   | Loc: Inventory/Belt | Pos: ( 3,  0) | Simple: true  | ID'd: true 
+  #4  tsc   | Loc: Other          | Pos: (12,  7) | Simple: true  | ID'd: true 
+  #5  isc   | Loc: Other          | Pos: (12,  6) | Simple: true  | ID'd: true 
+  #6  cm1   | Loc: Other          | Pos: ( 0,  0) | Simple: false | ID'd: true 
+  #7  lwb   | Loc: Stash          | Pos: (10,  0) | Simple: false | ID'd: true 
+  #8  amb   | Loc: Stash          | Pos: ( 8,  0) | Simple: false | ID'd: true 
+  #9  6hx   | Loc: Stash          | Pos: ( 6,  0) | Simple: false | ID'd: true 
+  #10 amf   | Loc: Stash          | Pos: ( 0,  3) | Simple: false | ID'd: true 
+  #11 ama   | Loc: Stash          | Pos: ( 1,  3) | Simple: false | ID'd: true 
+  #12 lbb   | Loc: Stash          | Pos: (12,  0) | Simple: false | ID'd: true 
+  #13 6rx   | Loc: Stash          | Pos: (14,  0) | Simple: false | ID'd: true 
+  #14 8sw   | Loc: Stash          | Pos: ( 0,  0) | Simple: false | ID'd: true 
+  #15 8sb   | Loc: Stash          | Pos: ( 2,  0) | Simple: false | ID'd: true 
+  #16 jav   | Loc: Inventory/Belt | Pos: ( 4,  0) | Simple: false | ID'd: true 
+  #17 buc   | Loc: Inventory/Belt | Pos: ( 5,  0) | Simple: false | ID'd: true 
+
+OTHER:
+  Corpse Count   : 0
+  Mercenary Magic: 0x666A
+  Golem Status   : 0
