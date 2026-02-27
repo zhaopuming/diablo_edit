@@ -1,4 +1,4 @@
-use binrw::binread;
+use binrw::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_big_array::BigArray;
 use ts_rs::TS;
@@ -51,7 +51,11 @@ pub struct D2sHeader {
     
     #[serde(with = "BigArray")]
     #[ts(type = "number[]")]
-    pub unk7: [u8; 0x4C],
+    pub unknown_extra: [u8; 68], // Rest of unk7 (76 - 8)
     
-    pub unk8: u32,
+    #[serde(with = "BigArray")]
+    #[ts(type = "number[]")]
+    pub name_ptr: [u8; 64],
+    
+    pub unknown_final: u32,
 }
