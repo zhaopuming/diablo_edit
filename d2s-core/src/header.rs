@@ -3,10 +3,10 @@ use serde::{Deserialize, Serialize};
 use serde_big_array::BigArray;
 use ts_rs::TS;
 
-#[binread]
+#[binrw]
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
-#[br(little)]
+#[brw(little)]
 pub struct D2sHeader {
     pub magic: u32,       // 0xAA55AA55
     pub version: u32,     // 0x5C = 1.09, 0x60 = 1.10, 0x61 = D2R

@@ -68,7 +68,7 @@ fn main() {
             }
             
             println!("\nOTHER:");
-            println!("  Corpse Count   : {}", save.corpse.count);
+            println!("  Corpse Count   : {}", save.corpse.corpses.len());
             println!("  Mercenary Magic: 0x{:04X}", save.mercenary.magic);
             println!("  Golem Status   : {}", save.golem.exists);
         },

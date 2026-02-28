@@ -11,7 +11,7 @@ pub mod huffman;
 pub mod properties;
 pub mod metadata;
 
-use binrw::binread;
+use binrw::binrw;
 use serde::{Deserialize, Serialize};
 
 use header::D2sHeader;
@@ -26,20 +26,20 @@ use golem::Golem;
 use serde_big_array::BigArray;
 use ts_rs::TS;
 
-#[binread]
+#[binrw]
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
-#[br(little)]
+#[brw(little)]
 pub struct D2sSave {
     pub header: D2sHeader,
     pub quests: QuestInfo,
     pub waypoints: Waypoints,
-    
+
     // NPC Dialog Intro Flags
     #[serde(with = "BigArray")]
     #[ts(type = "number[]")]
     pub npc_data: [u8; 0x34],
-    
+
     pub stats: PlayerStats,
     pub skills: CharSkills,
     pub items: ItemList,
@@ -49,6 +49,7 @@ pub struct D2sSave {
 }
 
 use binrw::BinRead;
+use binrw::BinWrite;
 use std::io::Cursor;
 use thiserror::Error;
 
@@ -58,11 +59,25 @@ pub enum ParseError {
     BinrwError(#[from] binrw::Error),
 }
 
+#[derive(Debug, Error)]
+pub enum SerializeError {
+    #[error("IO/Serialization Error: {0}")]
+    BinrwError(#[from] binrw::Error),
+}
+
 /// Parses a D2S byte slice into a completely structured save representation.
 pub fn parse_d2s(bytes: &[u8]) -> Result<D2sSave, ParseError> {
     let mut reader = Cursor::new(bytes);
     let save = D2sSave::read(&mut reader)?;
     Ok(save)
+}
+
+/// Serializes a D2sSave back to bytes.
+/// Note: This requires all structs to implement BinWrite.
+pub fn serialize_d2s(save: &D2sSave) -> Result<Vec<u8>, SerializeError> {
+    let mut writer = Cursor::new(Vec::new());
+    save.write(&mut writer)?;
+    Ok(writer.into_inner())
 }
 
 #[cfg(test)]

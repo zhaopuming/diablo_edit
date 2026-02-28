@@ -1,16 +1,13 @@
-use binrw::binread;
+use binrw::binrw;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-#[binread]
+#[binrw]
 #[derive(Debug, Serialize, Deserialize, Clone, TS)]
 #[ts(export)]
-#[br(little)]
+#[brw(little)]
 pub struct Mercenary {
     #[br(assert(magic == 0x666A, "Invalid Mercenary Magic: expected 'jf'"))]
+    #[bw(assert(*magic == 0x666A))]
     pub magic: u16,
-    
-    // In D2S, the items for mercenary only exist if the character has a mercenary.
-    // This is often controlled by a flag in the header (dwMercControl)
-    // For now, we'll try to read it as a MayExist pattern or handle it in lib.rs logic.
 }

@@ -24,6 +24,7 @@ pub struct WaypointData {
 #[brw(little)]
 pub struct Waypoints {
     #[br(assert(magic == 0x5357, "Invalid Waypoints Magic: expected 0x5357 (WS)"))]
+    #[bw(assert(*magic == 0x5357))]
     pub magic: u16,
     pub unk1: u32,
     pub size: u16,        // 0x50 (80)

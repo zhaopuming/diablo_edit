@@ -1,18 +1,20 @@
 use binrw::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::io::{Read, Seek};
-use bitstream_io::{BitRead, BitReader, LittleEndian};
+use std::io::{Read, Seek, Write};
+use bitstream_io::{BitRead, BitReader, BitWrite, BitWriter, LittleEndian};
 use ts_rs::TS;
 
-#[binread]
+#[binrw]
 #[derive(Debug, Serialize, Deserialize, TS)]
 #[ts(export)]
-#[br(little)]
+#[brw(little)]
 pub struct PlayerStats {
     #[br(assert(magic == 0x6667, "Invalid Stats Magic: expected 0x6667 (gf)"))]
+    #[bw(assert(*magic == 0x6667))]
     pub magic: u16,
-    
+
     #[br(parse_with = parse_stats_values)]
+    #[bw(write_with = write_stats_values)]
     pub values: std::collections::HashMap<u16, u32>,
 }
 
@@ -64,4 +66,41 @@ pub fn parse_stats_values<R: Read + Seek>(
 
     bit_reader.byte_align();
     Ok(values)
+}
+
+pub fn write_stats_values<W: Write + Seek>(
+    values: &std::collections::HashMap<u16, u32>,
+    writer: &mut W,
+    _endian: binrw::Endian,
+    _args: (),
+) -> BinResult<()> {
+    let mut bit_writer = BitWriter::endian(writer, LittleEndian);
+
+    for (&id, &val) in values.iter() {
+        // Write 9-bit stat ID
+        bit_writer.write::<9, u16>(id).map_err(io_err)?;
+
+        if (id as usize) < STAT_BITS.len() {
+            let bits = STAT_BITS[id as usize];
+            match bits {
+                7 => bit_writer.write::<7, u32>(val).map_err(io_err)?,
+                8 => bit_writer.write::<8, u32>(val).map_err(io_err)?,
+                10 => bit_writer.write::<10, u32>(val).map_err(io_err)?,
+                21 => bit_writer.write::<21, u32>(val).map_err(io_err)?,
+                25 => bit_writer.write::<25, u32>(val).map_err(io_err)?,
+                32 => bit_writer.write::<32, u32>(val).map_err(io_err)?,
+                _ => {}
+            }
+        }
+    }
+
+    // Write terminator (0x1FF = 9 bits of 1s)
+    bit_writer.write::<9, u16>(0x1FF).map_err(io_err)?;
+    bit_writer.byte_align().map_err(io_err)?;
+
+    Ok(())
+}
+
+fn io_err<E: std::error::Error + Send + Sync + 'static>(e: E) -> binrw::Error {
+    binrw::Error::Io(std::io::Error::new(std::io::ErrorKind::Other, e))
 }

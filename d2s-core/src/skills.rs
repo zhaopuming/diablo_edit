@@ -8,6 +8,7 @@ use ts_rs::TS;
 #[brw(little)]
 pub struct CharSkills {
     #[br(assert(magic == 0x6669, "Invalid Skills Magic: expected 0x6669 (if)"))]
+    #[bw(assert(*magic == 0x6669))]
     pub magic: u16,
     
     #[ts(type = "number[]")]

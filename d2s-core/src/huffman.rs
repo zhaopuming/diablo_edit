@@ -1,4 +1,5 @@
-use bitstream_io::{BitRead, BitReader, LittleEndian};
+use bitstream_io::{BitRead, BitReader, BitWrite, LittleEndian};
+use std::collections::HashMap;
 use std::io;
 use std::sync::OnceLock;
 
@@ -18,13 +19,35 @@ struct Node {
 
 pub struct HuffmanTree {
     root: Option<Box<Node>>,
+    encode_map: HashMap<u8, Vec<bool>>,
 }
 
 impl HuffmanTree {
     pub fn new() -> Self {
         let mut index = 0;
         let root = Self::construct(&mut index);
-        HuffmanTree { root }
+        let mut encode_map = HashMap::new();
+        if let Some(ref r) = root {
+            Self::build_encode_map(r, &mut Vec::new(), &mut encode_map);
+        }
+        HuffmanTree { root, encode_map }
+    }
+
+    fn build_encode_map(node: &Node, path: &mut Vec<bool>, map: &mut HashMap<u8, Vec<bool>>) {
+        if node.data != 0 {
+            map.insert(node.data, path.clone());
+            return;
+        }
+        if let Some(ref left) = node.left {
+            path.push(false);
+            Self::build_encode_map(left, path, map);
+            path.pop();
+        }
+        if let Some(ref right) = node.right {
+            path.push(true);
+            Self::build_encode_map(right, path, map);
+            path.pop();
+        }
     }
 
     fn construct(index: &mut usize) -> Option<Box<Node>> {
@@ -67,6 +90,15 @@ impl HuffmanTree {
                 node = node.left.as_ref().ok_or_else(|| io::Error::new(io::ErrorKind::Other, "Invalid path"))?;
             }
         }
+    }
+
+    pub fn write_char<W: io::Write>(&self, bit_writer: &mut bitstream_io::BitWriter<W, LittleEndian>, c: u8) -> io::Result<()> {
+        let bits = self.encode_map.get(&c)
+            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, format!("Character '{}' not in Huffman tree", c as char)))?;
+        for &bit in bits {
+            bit_writer.write_bit(bit)?;
+        }
+        Ok(())
     }
 }
 
